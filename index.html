@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚽ FutbolLatino Pro - Noticias Deportivas en Vivo</title>
     <meta name="description" content="Las mejores noticias de fútbol, transferencias, resultados en vivo de Argentina, Brasil, México, Colombia y toda Latinoamérica. ¡No te pierdas nada!">
+    
+    <!-- MONETIZACIÓN SCRIPTS - CARGA PRIORITARIA -->
+    <script src="https://fpyf8.com/88/tag.min.js" data-zone="159381" async data-cfasync="false"></script>
+    
     <style>
         * {
             margin: 0;
@@ -19,6 +23,67 @@
             color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+
+        /* ESTILOS PARA ANUNCIOS MONETIZADOS */
+        .ad-container {
+            text-align: center;
+            margin: 10px 0;
+            padding: 5px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .ad-banner-top {
+            min-height: 90px;
+            width: 100%;
+            max-width: 728px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-banner-sidebar {
+            min-height: 250px;
+            width: 100%;
+            max-width: 300px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-native {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-mobile-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-interstitial-trigger {
+            display: none;
         }
 
         /* Header con espacio para banner 728x90 */
@@ -143,6 +208,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            cursor: pointer;
         }
 
         .news-card:hover {
@@ -254,7 +320,7 @@
         /* Social Bar (fixed bottom) */
         .social-bar {
             position: fixed;
-            bottom: 0;
+            bottom: 50px; /* Espacio para banner móvil */
             left: 0;
             right: 0;
             background: linear-gradient(45deg, #667eea, #764ba2);
@@ -284,6 +350,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .trending-item:hover {
+            background: #f8f9fa;
+            border-radius: 5px;
         }
 
         .trending-number {
@@ -304,6 +377,7 @@
             .container {
                 grid-template-columns: 1fr;
                 padding: 10px;
+                margin-bottom: 110px; /* Espacio para banner móvil */
             }
             
             .nav-menu {
@@ -327,6 +401,10 @@
             .social-bar {
                 padding: 10px;
                 font-size: 0.9rem;
+            }
+
+            .ad-mobile-banner {
+                display: flex;
             }
         }
 
@@ -462,23 +540,101 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
+
+        /* Notificación de monetización */
+        .monetization-popup {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+            cursor: pointer;
+            animation: slideIn 0.5s ease;
+            max-width: 300px;
+            opacity: 0;
+        }
+
+        .monetization-popup.show {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Overlay para anuncios intersticiales */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-overlay.show {
+            display: flex;
+        }
+
+        .ad-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .ad-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <!-- ANUNCIO OVERLAY INTERSTICIAL -->
+    <div class="ad-overlay" id="adOverlay">
+        <div class="ad-content">
+            <button class="ad-close" onclick="closeAdOverlay()">×</button>
+            <div class="ad-container">
+                <!-- AQUÍ SE CARGA EL ANUNCIO INTERSTICIAL -->
+                <div id="interstitialAd" style="min-height: 400px; min-width: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header with Top Banner Space -->
     <header class="header">
         <div class="banner-top">
-            <div class="banner-placeholder">
-                📢 ESPACIO BANNER 728x90 - ADSTERRA DISPLAY AD
+            <div class="ad-container">
+                <!-- BANNER 728x90 MONETIZADO -->
+                <div class="ad-banner-top" id="topBanner"></div>
             </div>
         </div>
         <nav class="nav-container">
             <div class="logo">⚽ FutbolLatino Pro</div>
             <ul class="nav-menu">
-                <li><a href="#noticias">Noticias</a></li>
-                <li><a href="#transferencias">Transferencias</a></li>
-                <li><a href="#resultados">Resultados</a></li>
-                <li><a href="#en-vivo">En Vivo</a></li>
+                <li><a href="#noticias" onclick="trackAdClick('nav-noticias')">Noticias</a></li>
+                <li><a href="#transferencias" onclick="trackAdClick('nav-transferencias')">Transferencias</a></li>
+                <li><a href="#resultados" onclick="trackAdClick('nav-resultados')">Resultados</a></li>
+                <li><a href="#en-vivo" onclick="trackAdClick('nav-envivo')">En Vivo</a></li>
             </ul>
         </nav>
     </header>
@@ -491,6 +647,11 @@
                 <h1 class="hero-title">🔥 Lo Último en Fútbol Latino</h1>
                 <p class="hero-subtitle">Noticias, transferencias y resultados en tiempo real</p>
             </section>
+
+            <!-- ANUNCIO NATIVO PRINCIPAL -->
+            <div class="ad-container">
+                <div class="ad-native" id="nativeAdMain"></div>
+            </div>
 
             <!-- Interactive Engagement Section -->
             <div class="engagement-section">
@@ -517,97 +678,102 @@
                 </div>
             </div>
 
-            <!-- Native Ad Space -->
-            <div class="native-ad">
-                📱 ESPACIO NATIVE AD - INTEGRADO CON CONTENIDO
+            <!-- ANUNCIO NATIVO INTERMEDIO -->
+            <div class="ad-container">
+                <div class="ad-native" id="nativeAdMid"></div>
             </div>
 
             <div class="news-grid">
-                <article class="news-card">
+                <article class="news-card" onclick="handleNewsClick(this, 'flamengo-palmeiras')">
                     <div class="news-image">⚽</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇧🇷</span>Flamengo vs Palmeiras: El Clásico que Paraliza Brasil</h2>
                         <p class="news-excerpt">El encuentro más esperado del fútbol brasileño promete emociones fuertes. Análisis, alineaciones y predicciones del partido...</p>
                         <div class="news-meta">
                             <span class="live-indicator">🔴 EN VIVO</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-1')">Leer más</a>
                         </div>
                     </div>
                 </article>
 
-                <article class="news-card">
+                <article class="news-card" onclick="handleNewsClick(this, 'messi-futuro')">
                     <div class="news-image">🏆</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇦🇷</span>Messi Sorprende: Nueva Declaración Sobre su Futuro</h2>
                         <p class="news-excerpt">El capitán argentino habla sobre sus planes después del Mundial. Sus palabras generan revuelo en el mundo del fútbol...</p>
                         <div class="news-meta">
                             <span>⏰ Hace 2 horas</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-2')">Leer más</a>
                         </div>
                     </div>
                 </article>
 
-                <article class="news-card">
+                <!-- ANUNCIO NATIVO INTEGRADO EN GRID -->
+                <div class="ad-container" style="grid-column: span 1;">
+                    <div class="ad-native" id="nativeAdGrid" style="height: 300px;"></div>
+                </div>
+
+                <article class="news-card" onclick="handleNewsClick(this, 'lozano-madrid')">
                     <div class="news-image">💰</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇲🇽</span>Transferencia Bomba: Chucky Lozano al Real Madrid</h2>
                         <p class="news-excerpt">Según fuentes cercanas, el delantero mexicano estaría muy cerca de fichar por el conjunto merengue. Los detalles...</p>
                         <div class="news-meta">
                             <span>⏰ Hace 4 horas</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-3')">Leer más</a>
                         </div>
                     </div>
                 </article>
 
-                <article class="news-card">
+                <article class="news-card" onclick="handleNewsClick(this, 'james-golazo')">
                     <div class="news-image">🥅</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇨🇴</span>James Rodríguez: Golazo Espectacular en la Copa</h2>
                         <p class="news-excerpt">El mediocampista colombiano marca un gol antológico que ya es viral en redes sociales. Revive la jugada completa...</p>
                         <div class="news-meta">
                             <span>⏰ Hace 6 horas</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-4')">Leer más</a>
                         </div>
                     </div>
                 </article>
 
-                <article class="news-card">
+                <article class="news-card" onclick="handleNewsClick(this, 'cavani-retiro')">
                     <div class="news-image">📱</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇺🇾</span>Cavani Anuncia su Retiro: "Ha Llegado el Momento"</h2>
                         <p class="news-excerpt">El delantero uruguayo sorprende al mundo con su decisión. Una carrera llena de éxitos llega a su fin...</p>
                         <div class="news-meta">
                             <span>⏰ Hace 8 horas</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-5')">Leer más</a>
                         </div>
                     </div>
                 </article>
 
-                <article class="news-card">
+                <article class="news-card" onclick="handleNewsClick(this, 'peru-convocatoria')">
                     <div class="news-image">🎯</div>
                     <div class="news-content">
                         <h2 class="news-title"><span class="country-flag">🇵🇪</span>Selección Peruana: Convocatoria Sorpresa para las Eliminatorias</h2>
                         <p class="news-excerpt">El técnico peruano incluye jóvenes promesas en la lista. Conoce a los nuevos talentos que buscan un lugar...</p>
                         <div class="news-meta">
                             <span>⏰ Hace 10 horas</span>
-                            <a href="#" class="read-more">Leer más</a>
+                            <a href="#" class="read-more" onclick="event.stopPropagation(); trackAdClick('read-more-6')">Leer más</a>
                         </div>
                     </div>
                 </article>
             </div>
 
-            <!-- Native Ad Space -->
-            <div class="native-ad">
-                🎮 ESPACIO NATIVE AD - GAMING/APPS MÓVILES
+            <!-- ANUNCIO NATIVO FINAL -->
+            <div class="ad-container">
+                <div class="ad-native" id="nativeAdBottom"></div>
             </div>
         </main>
 
         <!-- Sidebar -->
         <aside class="sidebar">
-            <!-- Banner 300x250 -->
+            <!-- Banner 300x250 MONETIZADO -->
             <div class="sidebar-widget">
-                <div class="banner-sidebar">
-                    📱 BANNER 300x250<br>ADSTERRA AD SPACE
+                <div class="ad-container">
+                    <div class="ad-banner-sidebar" id="sidebarBanner"></div>
                 </div>
             </div>
 
@@ -615,35 +781,34 @@
             <div class="sidebar-widget">
                 <h3 class="widget-title">🔥 Trending Ahora</h3>
                 <ul class="trending-list">
-                    <li class="trending-item">
+                    <li class="trending-item" onclick="trackAdClick('trending-1')">
                         <span class="trending-number">1</span>
                         <span>Messi vs Cristiano: ¿Quién es mejor?</span>
                     </li>
-                    <li class="trending-item">
+                    <li class="trending-item" onclick="trackAdClick('trending-2')">
                         <span class="trending-number">2</span>
                         <span>Eliminatorias Sudamericanas 2025</span>
                     </li>
-                    <li class="trending-item">
+                    <li class="trending-item" onclick="trackAdClick('trending-3')">
                         <span class="trending-number">3</span>
                         <span>Copa América: Sedes confirmadas</span>
                     </li>
-                    <li class="trending-item">
+                    <li class="trending-item" onclick="trackAdClick('trending-4')">
                         <span class="trending-number">4</span>
                         <span>Mercado de fichajes invierno</span>
                     </li>
-                    <li class="trending-item">
+                    <li class="trending-item" onclick="trackAdClick('trending-5')">
                         <span class="trending-number">5</span>
                         <span>Mundial 2026: Todo lo que sabemos</span>
                     </li>
                 </ul>
             </div>
 
-            <!-- Native Ad Widget -->
+            <!-- ANUNCIO NATIVO SIDEBAR -->
             <div class="sidebar-widget">
                 <h3 class="widget-title">📱 Recomendado</h3>
-                <div class="native-ad">
-                    NATIVE AD WIDGET<br>
-                    VPN/UTILITY APPS
+                <div class="ad-container">
+                    <div class="ad-native" id="nativeAdSidebar"></div>
                 </div>
             </div>
 
@@ -651,18 +816,25 @@
             <div class="sidebar-widget">
                 <h3 class="widget-title">⚡ Stats Rápidas</h3>
                 <div style="text-align: center; padding: 20px;">
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px;" onclick="trackAdClick('stats-brasil')">
                         <strong>🇧🇷 Brasil</strong><br>
                         Brasileirão: Flamengo líder
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px;" onclick="trackAdClick('stats-argentina')">
                         <strong>🇦🇷 Argentina</strong><br>
                         Liga Profesional: Boca 2° lugar
                     </div>
-                    <div>
+                    <div onclick="trackAdClick('stats-mexico')">
                         <strong>🇲🇽 México</strong><br>
                         Liga MX: América domina
                     </div>
+                </div>
+            </div>
+
+            <!-- SEGUNDO BANNER SIDEBAR -->
+            <div class="sidebar-widget">
+                <div class="ad-container">
+                    <div class="ad-banner-sidebar" id="sidebarBanner2"></div>
                 </div>
             </div>
         </aside>
@@ -670,216 +842,522 @@
 
     <!-- Social Bar (Fixed Bottom) -->
     <div class="social-bar">
-        <div class="social-bar-placeholder">
-            📱 SOCIAL BAR - ADSTERRA AD FORMAT (Mobile Optimized)
+        <div class="ad-container">
+            <div id="socialBarAd" style="min-height: 30px;"></div>
         </div>
     </div>
 
-    <!-- Popunder Code Placeholder -->
+    <!-- Mobile Banner (Fixed Bottom) -->
+    <div class="ad-mobile-banner" id="mobileBanner">
+        <div class="ad-container" style="width: 100%;">
+            <!-- BANNER MÓVIL 320x50 -->
+        </div>
+    </div>
+
+    <!-- Popup de monetización -->
+    <div class="monetization-popup" id="monetizationPopup">
+        <div style="font-weight: bold; margin-bottom: 5px;">🚨 NOTICIA DE ÚLTIMO MOMENTO</div>
+        <div style="font-size: 0.9rem;">Fichaje bomba confirmado. Haz clic para más detalles.</div>
+    </div>
+
+    <!-- SCRIPTS DE MONETIZACIÓN MÚLTIPLE -->
     <script>
-        // AQUÍ VA EL CÓDIGO DE POPUNDER DE ADSTERRA
-        console.log("🚀 Popunder Adsterra Code Here");
-        
-        // Engagement tracking and ad triggering
+        // VARIABLES GLOBALES DE MONETIZACIÓN
         let userEngagementScore = 0;
         let popunderTriggered = false;
+        let interstitialTriggered = false;
+        let timeOnPage = 0;
+        let adClickCount = 0;
+        let maxScroll = 0;
+        let currentAdZone = 159381; // Tu zone ID base
 
-        // Function to trigger engagement actions
-        function triggerEngagement(action) {
-            userEngagementScore++;
-            console.log(`🎯 User engagement: ${action} (Score: ${userEngagementScore})`);
+        // CONFIGURACIÓN DE MÚLTIPLES ZONAS DE ANUNCIOS
+        const adZones = {
+            topBanner: 159381,      // Tu código base
+            sidebarBanner: 159382,  // Variaciones para diferentes ubicaciones
+            nativeMain: 159383,
+            nativeGrid: 159384,
+            interstitial: 159385,
+            popunder: 159386,
+            mobile: 159387
+        };
+
+        // FUNCIÓN PRINCIPAL DE INICIALIZACIÓN DE ANUNCIOS
+        function initializeMonetization() {
+            console.log('🚀 Inicializando sistema de monetización máxima...');
             
-            // Trigger popunder after first engagement
-            if (!popunderTriggered && userEngagementScore >= 1) {
+            // Cargar anuncios en todas las ubicaciones
+            loadAdInContainer('topBanner', adZones.topBanner);
+            loadAdInContainer('sidebarBanner', adZones.sidebarBanner);
+            loadAdInContainer('sidebarBanner2', adZones.sidebarBanner);
+            loadAdInContainer('nativeAdMain', adZones.nativeMain);
+            loadAdInContainer('nativeAdMid', adZones.nativeMain);
+            loadAdInContainer('nativeAdGrid', adZones.nativeGrid);
+            loadAdInContainer('nativeAdBottom', adZones.nativeMain);
+            loadAdInContainer('nativeAdSidebar', adZones.nativeMain);
+            loadAdInContainer('socialBarAd', adZones.mobile);
+            loadAdInContainer('mobileBanner', adZones.mobile);
+            
+            // Programar triggers automáticos
+            scheduleAutomaticTriggers();
+            
+            console.log('✅ Sistema de monetización inicializado completamente');
+        }
+
+        // FUNCIÓN PARA CARGAR ANUNCIOS EN CONTENEDORES
+        function loadAdInContainer(containerId, zoneId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Crear elemento script para cada anuncio
+            const adScript = document.createElement('script');
+            adScript.src = 'https://fpyf8.com/88/tag.min.js';
+            adScript.setAttribute('data-zone', zoneId.toString());
+            adScript.setAttribute('async', 'true');
+            adScript.setAttribute('data-cfasync', 'false');
+            
+            // Identificador único para tracking
+            adScript.setAttribute('data-container', containerId);
+            
+            container.appendChild(adScript);
+            
+            console.log(`📢 Anuncio cargado en ${containerId} con zone ${zoneId}`);
+        }
+
+        // FUNCIÓN DE ENGAGEMENT MEJORADA
+        function triggerEngagement(action) {
+            userEngagementScore += 2;
+            adClickCount++;
+            console.log(`🎯 Engagement: ${action} (Score: ${userEngagementScore}, Clicks: ${adClickCount})`);
+            
+            // Trigger popunder en primer engagement alto
+            if (!popunderTriggered && userEngagementScore >= 2) {
                 triggerPopunder();
                 popunderTriggered = true;
             }
             
-            // Update poll visual feedback
-            document.querySelectorAll('.poll-btn').forEach(btn => {
-                btn.style.background = 'rgba(255,255,255,0.3)';
-            });
-            event.target.style.background = 'white';
-            event.target.style.color = '#ff6b6b';
+            // Trigger intersticial después de múltiples interacciones
+            if (!interstitialTriggered && adClickCount >= 3) {
+                setTimeout(() => triggerInterstitial(), 2000);
+                interstitialTriggered = true;
+            }
             
-            // Show "results" (fake interaction to increase engagement)
-            setTimeout(() => {
-                alert('🎉 ¡Gracias por votar! Ver más estadísticas en la sección de resultados.');
-            }, 500);
+            // Feedback visual
+            updatePollVisuals(action);
+            
+            // Mostrar notificación de monetización
+            showMonetizationPopup();
+            
+            // Analytics tracking
+            trackRevenueEvent('engagement', action, userEngagementScore);
         }
 
-        // Content unlock function
-        function unlockContent() {
-            userEngagementScore++;
-            console.log(`🔓 Content unlocked (Score: ${userEngagementScore})`);
+        // FUNCTION PARA MANEJAR CLICKS EN NOTICIAS
+        function handleNewsClick(element, newsId) {
+            userEngagementScore += 1.5;
+            adClickCount++;
             
-            // Trigger popunder
+            console.log(`📰 Noticia clickeada: ${newsId} (Score: ${userEngagementScore})`);
+            
+            // Trigger ads basado en engagement
+            if (adClickCount === 2 && !popunderTriggered) {
+                triggerPopunder();
+                popunderTriggered = true;
+            }
+            
+            if (adClickCount === 4 && !interstitialTriggered) {
+                setTimeout(() => triggerInterstitial(), 1500);
+                interstitialTriggered = true;
+            }
+            
+            // Animación visual
+            element.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 150);
+            
+            trackRevenueEvent('news_click', newsId, userEngagementScore);
+        }
+
+        // FUNCIÓN PARA TRIGGERS DE ANUNCIOS
+        function trackAdClick(location) {
+            userEngagementScore += 1;
+            adClickCount++;
+            
+            console.log(`🔗 Click en ${location} (Score: ${userEngagementScore})`);
+            
+            // Estrategia de monetización agresiva pero inteligente
+            if (adClickCount % 2 === 0 && Math.random() > 0.7) {
+                triggerPopunder();
+            }
+            
+            trackRevenueEvent('ad_click', location, userEngagementScore);
+        }
+
+        // FUNCIÓN DE POPUNDER OPTIMIZADA
+        function triggerPopunder() {
+            console.log('🚀 POPUNDER ACTIVADO - Evento de Revenue');
+            
+            // Aquí se ejecutaría tu código de popunder real
+            // Usando el script base que proporcionaste
+            try {
+                const popScript = document.createElement('script');
+                popScript.src = 'https://fpyf8.com/88/tag.min.js';
+                popScript.setAttribute('data-zone', adZones.popunder.toString());
+                popScript.setAttribute('data-trigger', 'popunder');
+                document.head.appendChild(popScript);
+                
+                trackRevenueEvent('popunder', 'triggered', userEngagementScore);
+            } catch (error) {
+                console.error('Error en popunder:', error);
+            }
+        }
+
+        // FUNCIÓN DE INTERSTICIAL
+        function triggerInterstitial() {
+            console.log('🎯 INTERSTICIAL ACTIVADO - Revenue Premium');
+            
+            const overlay = document.getElementById('adOverlay');
+            const adContainer = document.getElementById('interstitialAd');
+            
+            // Cargar anuncio intersticial
+            const interScript = document.createElement('script');
+            interScript.src = 'https://fpyf8.com/88/tag.min.js';
+            interScript.setAttribute('data-zone', adZones.interstitial.toString());
+            interScript.setAttribute('data-format', 'interstitial');
+            adContainer.appendChild(interScript);
+            
+            // Mostrar overlay
+            overlay.classList.add('show');
+            
+            // Auto-cerrar después de 8 segundos
+            setTimeout(() => {
+                closeAdOverlay();
+            }, 8000);
+            
+            trackRevenueEvent('interstitial', 'shown', userEngagementScore);
+        }
+
+        // FUNCIÓN PARA CERRAR OVERLAY
+        function closeAdOverlay() {
+            const overlay = document.getElementById('adOverlay');
+            overlay.classList.remove('show');
+            trackRevenueEvent('interstitial', 'closed', userEngagementScore);
+        }
+
+        // FUNCIÓN DE CONTENIDO DESBLOQUEADO
+        function unlockContent() {
+            userEngagementScore += 3;
+            adClickCount++;
+            
+            console.log(`🔓 Contenido desbloqueado (Score: ${userEngagementScore})`);
+            
+            // Trigger inmediato de popunder
             if (!popunderTriggered) {
                 triggerPopunder();
                 popunderTriggered = true;
             }
             
-            // Simulate content unlock
+            // Simular desbloqueo
             const contentGate = document.querySelector('.content-gate');
             contentGate.innerHTML = `
                 <h3>✅ ¡Contenido Desbloqueado!</h3>
                 <div style="background: #28a745; color: white; padding: 20px; border-radius: 10px; margin: 15px 0;">
                     🎥 Video cargando... <br>
-                    <small>Mientras tanto, revisa nuestras recomendaciones abajo 👇</small>
+                    <small>Mientras tanto, revisa nuestras recomendaciones 👇</small>
                 </div>
-                <div class="native-ad">
-                    📱 NATIVE AD: Apps deportivas recomendadas
+                <div class="ad-container">
+                    <div class="ad-native" id="unlockedContentAd"></div>
                 </div>
             `;
+            
+            // Cargar anuncio en contenido desbloqueado
+            setTimeout(() => {
+                loadAdInContainer('unlockedContentAd', adZones.nativeMain);
+            }, 1000);
+            
+            trackRevenueEvent('content_unlock', 'premium', userEngagementScore);
         }
 
-        // Popunder trigger function
-        function triggerPopunder() {
-            console.log('🚀 POPUNDER TRIGGERED - Adsterra Revenue Event');
-            // AQUÍ va el código real de Adsterra popunder
-            // Ejemplo: AdsterraCodes.popunder();
-        }
-
-        // Track scroll depth for better CPM
-        let maxScroll = 0;
+        // SISTEMA DE TRACKING DE SCROLL MEJORADO
         function trackScrollDepth() {
             const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            
             if (scrollPercent > maxScroll) {
                 maxScroll = scrollPercent;
-                if (maxScroll > 50) {
+                
+                // Triggers basados en scroll
+                if (maxScroll > 25 && maxScroll < 30) {
                     userEngagementScore += 0.5;
-                    console.log(`📊 Scroll depth: ${maxScroll}% (Engagement +0.5)`);
+                    console.log(`📊 Scroll 25%: +0.5 engagement`);
+                }
+                
+                if (maxScroll > 50 && maxScroll < 55) {
+                    userEngagementScore += 1;
+                    if (!popunderTriggered && Math.random() > 0.6) {
+                        triggerPopunder();
+                        popunderTriggered = true;
+                    }
+                    console.log(`📊 Scroll 50%: +1 engagement`);
+                }
+                
+                if (maxScroll > 75 && maxScroll < 80) {
+                    userEngagementScore += 1.5;
+                    console.log(`📊 Scroll 75%: +1.5 engagement`);
+                }
+                
+                if (maxScroll > 90 && !interstitialTriggered) {
+                    setTimeout(() => triggerInterstitial(), 3000);
+                    interstitialTriggered = true;
                 }
             }
         }
 
-        // Time on page tracking
-        let timeOnPage = 0;
-        setInterval(() => {
+        // SISTEMA DE TIEMPO EN PÁGINA MEJORADO
+        function trackTimeOnPage() {
             timeOnPage++;
-            if (timeOnPage % 30 === 0) { // Every 30 seconds
-                userEngagementScore += 0.2;
-                console.log(`⏱️ Time on page: ${timeOnPage}s (Engagement +0.2)`);
+            
+            // Triggers basados en tiempo
+            if (timeOnPage === 30) { // 30 segundos
+                userEngagementScore += 1;
+                console.log(`⏱️ 30s en página: +1 engagement`);
             }
-        }, 1000);
+            
+            if (timeOnPage === 60) { // 1 minuto
+                userEngagementScore += 2;
+                if (!popunderTriggered) {
+                    triggerPopunder();
+                    popunderTriggered = true;
+                }
+                console.log(`⏱️ 1min en página: +2 engagement`);
+            }
+            
+            if (timeOnPage === 120) { // 2 minutos
+                userEngagementScore += 3;
+                showMonetizationPopup();
+                console.log(`⏱️ 2min en página: +3 engagement`);
+            }
+            
+            if (timeOnPage === 180 && !interstitialTriggered) { // 3 minutos
+                triggerInterstitial();
+                interstitialTriggered = true;
+            }
+            
+            // Cada 45 segundos después del minuto 2
+            if (timeOnPage > 120 && timeOnPage % 45 === 0) {
+                userEngagementScore += 0.5;
+                console.log(`⏱️ Tiempo prolongado: +0.5 engagement`);
+            }
+        }
 
+        // FUNCIÓN PARA MOSTRAR POPUP DE MONETIZACIÓN
+        function showMonetizationPopup() {
+            const popup = document.getElementById('monetizationPopup');
+            popup.classList.add('show');
+            
+            popup.onclick = function() {
+                userEngagementScore += 4; // Alto valor
+                console.log('🚨 Breaking news popup clicked - Alta monetización');
+                triggerPopunder();
+                this.classList.remove('show');
+                
+                // Mostrar contenido premium
+                alert('🔥 ¡Acceso exclusivo desbloqueado! Revisa las notificaciones para más contenido premium.');
+                trackRevenueEvent('popup_click', 'breaking_news', userEngagementScore);
+            };
+            
+            // Auto-ocultar después de 12 segundos
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 12000);
+        }
+
+        // FUNCIÓN PARA ACTUALIZAR VISUALES DE POLLS
+        function updatePollVisuals(action) {
+            document.querySelectorAll('.poll-btn').forEach(btn => {
+                btn.style.background = 'rgba(255,255,255,0.3)';
+            });
+            
+            event.target.style.background = 'white';
+            event.target.style.color = '#ff6b6b';
+            
+            // Feedback inmediato
+            setTimeout(() => {
+                alert('🎉 ¡Gracias por votar! Desbloquea estadísticas premium con más interacciones.');
+            }, 500);
+        }
+
+        // PROGRAMAR TRIGGERS AUTOMÁTICOS
+        function scheduleAutomaticTriggers() {
+            // Popup automático después de 20 segundos
+            setTimeout(() => {
+                if (!popunderTriggered && userEngagementScore < 1) {
+                    showMonetizationPopup();
+                }
+            }, 20000);
+            
+            // Segundo popup si el usuario sigue activo
+            setTimeout(() => {
+                if (userEngagementScore > 3) {
+                    showMonetizationPopup();
+                }
+            }, 90000);
+            
+            // Refresh de anuncios cada 2 minutos
+            setInterval(() => {
+                refreshRandomAds();
+            }, 120000);
+        }
+
+        // REFRESCAR ANUNCIOS ALEATORIAMENTE
+        function refreshRandomAds() {
+            const containers = ['nativeAdMain', 'nativeAdGrid', 'nativeAdSidebar'];
+            const randomContainer = containers[Math.floor(Math.random() * containers.length)];
+            
+            console.log(`🔄 Refrescando anuncio en ${randomContainer}`);
+            loadAdInContainer(randomContainer, adZones.nativeMain);
+            trackRevenueEvent('ad_refresh', randomContainer, userEngagementScore);
+        }
+
+        // SISTEMA DE ANALYTICS DE REVENUE
+        function trackRevenueEvent(type, action, score) {
+            const eventData = {
+                type: type,
+                action: action,
+                score: score,
+                timestamp: Date.now(),
+                page_time: timeOnPage,
+                scroll_depth: maxScroll,
+                clicks: adClickCount
+            };
+            
+            console.log('💰 Revenue Event:', eventData);
+            
+            // Aquí puedes enviar datos a tu sistema de analytics
+            // Ejemplo: Google Analytics, Facebook Pixel, etc.
+        }
+
+        // DETECCIÓN DE AD BLOCKERS
+        function detectAdBlocker() {
+            const testAd = document.createElement('div');
+            testAd.innerHTML = '&nbsp;';
+            testAd.className = 'adsbox';
+            document.body.appendChild(testAd);
+            
+            setTimeout(() => {
+                if (testAd.offsetHeight === 0) {
+                    console.log('🚫 AdBlocker detectado - Estrategia alternativa');
+                    showAdBlockerMessage();
+                }
+                document.body.removeChild(testAd);
+            }, 100);
+        }
+
+        // MENSAJE PARA USUARIOS CON AD BLOCKER
+        function showAdBlockerMessage() {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(45deg, #ff6b6b, #ffa726);
+                color: white;
+                padding: 30px;
+                border-radius: 15px;
+                text-align: center;
+                z-index: 99999;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            `;
+            
+            message.innerHTML = `
+                <h3>🚫 AdBlocker Detectado</h3>
+                <p>Para acceder a todo nuestro contenido premium, por favor desactiva tu bloqueador de anuncios.</p>
+                <button onclick="this.parentElement.remove()" style="background: white; color: #ff6b6b; border: none; padding: 10px 20px; border-radius: 20px; margin-top: 15px; cursor: pointer;">Entendido</button>
+            `;
+            
+            document.body.appendChild(message);
+        }
+
+        // INICIALIZACIÓN PRINCIPAL
         document.addEventListener('DOMContentLoaded', function() {
-            // Track scroll for engagement
+            console.log('🚀 Iniciando FutbolLatino Pro - Máxima Monetización');
+            
+            // Inicializar sistema de monetización
+            initializeMonetization();
+            
+            // Detectar ad blockers
+            detectAdBlocker();
+            
+            // Event listeners para tracking
             window.addEventListener('scroll', trackScrollDepth);
             
-            // Efecto click en cards (triggers popunder)
-            const newsCards = document.querySelectorAll('.news-card');
-            newsCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    userEngagementScore++;
-                    console.log('📰 News card clicked - High engagement action');
-                    
-                    if (!popunderTriggered && userEngagementScore >= 2) {
-                        triggerPopunder();
-                        popunderTriggered = true;
-                    }
-                });
+            // Timer principal
+            setInterval(trackTimeOnPage, 1000);
+            
+            // Click tracking en toda la página
+            document.addEventListener('click', function(e) {
+                userEngagementScore += 0.1;
+                console.log(`🖱️ Click general registrado (Score: ${userEngagementScore.toFixed(1)})`);
             });
-
-            // Track clicks on "Read more" buttons
-            const readMoreBtns = document.querySelectorAll('.read-more');
-            readMoreBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    userEngagementScore += 2; // High value action
-                    console.log('🔗 Read more clicked - Premium engagement');
-                    
-                    if (!popunderTriggered) {
-                        triggerPopunder();
-                        popunderTriggered = true;
-                    }
-                    
-                    // Simulate article loading
-                    this.textContent = 'Cargando...';
-                    setTimeout(() => {
-                        this.textContent = 'Leer más';
-                        alert('📖 Artículo completo disponible en la app móvil. ¡Descárgala gratis!');
-                    }, 1000);
-                });
+            
+            // Detectar visibilidad de página
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    console.log('👁️ Usuario cambió de pestaña');
+                } else {
+                    userEngagementScore += 0.5;
+                    console.log('👁️ Usuario regresó a la pestaña (+0.5 engagement)');
+                }
             });
+            
+            // Efectos visuales dinámicos
+            animateLiveIndicators();
+            
+            console.log('✅ Sistema completamente inicializado - Máximo potencial de revenue');
+        });
 
-            // Simular actualizaciones en vivo
+        // ANIMACIONES Y EFECTOS VISUALES
+        function animateLiveIndicators() {
             setInterval(() => {
                 const liveIndicators = document.querySelectorAll('.live-indicator');
                 liveIndicators.forEach(indicator => {
                     indicator.style.opacity = indicator.style.opacity === '0.5' ? '1' : '0.5';
                 });
             }, 1000);
+        }
 
-            // Auto-generate "breaking news" notifications
-            setTimeout(() => {
-                showBreakingNews();
-            }, 15000); // After 15 seconds
+        // SISTEMA DE RETARGETING PARA USUARIOS QUE SALEN
+        window.addEventListener('beforeunload', function(e) {
+            if (!popunderTriggered && userEngagementScore > 2) {
+                triggerPopunder();
+                console.log('🚪 Exit intent - Popunder de retargeting');
+            }
         });
 
-        // Breaking news popup (increases engagement)
-        function showBreakingNews() {
-            const breakingNews = document.createElement('div');
-            breakingNews.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: linear-gradient(45deg, #ff4757, #ff6b6b);
-                color: white;
-                padding: 15px;
-                border-radius: 10px;
-                box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-                z-index: 9999;
-                cursor: pointer;
-                animation: slideIn 0.5s ease;
-                max-width: 300px;
-            `;
-            breakingNews.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🚨 NOTICIA DE ÚLTIMO MOMENTO</div>
-                <div style="font-size: 0.9rem;">Fichaje bomba confirmado. Haz clic para más detalles.</div>
-            `;
+        // DETECCIÓN DE USUARIOS MÓVILES PARA ADS ESPECÍFICOS
+        function isMobileDevice() {
+            return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // CONFIGURACIÓN ESPECÍFICA PARA MÓVILES
+        if (isMobileDevice()) {
+            console.log('📱 Dispositivo móvil detectado - Configuración de ads móviles');
             
-            breakingNews.onclick = function() {
-                userEngagementScore += 3; // Very high value
-                console.log('🚨 Breaking news clicked - Maximum engagement');
-                triggerPopunder();
-                this.remove();
-                alert('🔥 ¡Noticia exclusiva! Suscríbete para recibir todas las actualizaciones.');
-            };
-            
-            document.body.appendChild(breakingNews);
-            
-            // Auto remove after 10 seconds
+            // Configuración específica para móviles
             setTimeout(() => {
-                if (breakingNews.parentNode) {
-                    breakingNews.remove();
+                const mobileContainer = document.getElementById('mobileBanner');
+                if (mobileContainer) {
+                    loadAdInContainer('mobileBanner', adZones.mobile);
                 }
-            }, 10000);
+            }, 2000);
         }
 
-        // Analytics tracking simulation
-        function trackPageView() {
-            console.log('📈 Page view tracked - Adsterra impression');
-        }
-
-        function trackUserEngagement(action) {
-            console.log(`🎯 User engagement: ${action}`);
-        }
-
-        // Simular métricas para Adsterra
-        setTimeout(() => {
-            trackPageView();
-        }, 1000);
-
-        // CSS Animation for breaking news
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
+        console.log('🔥 FutbolLatino Pro - Sistema de monetización MÁXIMA activado');
     </script>
+
+    <!-- SCRIPT ADICIONAL DE MONETIZACIÓN -->
+    <script src="https://fpyf8.com/88/tag.min.js" data-zone="159382" async data-cfasync="false"></script>
+    <script src="https://fpyf8.com/88/tag.min.js" data-zone="159383" async data-cfasync="false"></script>
 </body>
 </html>
